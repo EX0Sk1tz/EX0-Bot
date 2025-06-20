@@ -48,28 +48,31 @@ client.login(process.env.DISCORD_TOKEN).then(() => {
   });
 });
 
-app.get('/api/humans', async (req, res) => {
+app.get('/api/stats', async (req, res) => {
   try {
     const guild = await client.guilds.fetch(process.env.GUILD_ID);
-    const members = await guild.members.fetch();
+    await guild.members.fetch(); // Alle Member laden
 
-    const humansOnline = members.filter(m =>
-      !m.user.bot &&
-      m.presence &&
-      m.presence.status !== 'offline'
-    );
+    const allMembers = guild.members.cache;
+    const humans = allMembers.filter(m => !m.user.bot);
+    const onlineHumans = humans.filter(m => m.presence && m.presence.status !== 'offline');
 
-    const result = humansOnline.map(m => ({
-      id: m.id,
-      username: m.user.username,
-      discriminator: m.user.discriminator,
-      avatar: m.user.displayAvatarURL({ size: 64 }),
-      status: m.presence.status
-    }));
+    const owner = await guild.fetchOwner();
 
-    res.json(result);
+    res.json({
+      name: guild.name,
+      owner: {
+        username: owner.user.username,
+        discriminator: owner.user.discriminator,
+        avatar: owner.user.displayAvatarURL({ dynamic: true, size: 64 })
+      },
+      createdAt: guild.createdAt,
+      totalMembers: allMembers.size,
+      onlineHumans: onlineHumans.size
+    });
+
   } catch (err) {
-    console.error("❌ Fehler bei /api/humans:", err);
-    res.status(500).json({ error: "Fehler beim Laden der echten Nutzer" });
+    console.error("❌ Fehler bei /api/stats:", err);
+    res.status(500).json({ error: "Fehler beim Abrufen der Serverstatistik" });
   }
 });
