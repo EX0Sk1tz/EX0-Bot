@@ -46,7 +46,7 @@ function getStatusDotClass(status) {
         discordStatsBox.innerHTML = `
           <p><strong>Owner:</strong>
             <img src="${data.owner.avatar}" alt="Owner Avatar" width="24" style="vertical-align:middle;border-radius:50%;" />
-            ${data.owner.username}#${data.owner.discriminator}
+            EX0DIA
           </p>
           <p><strong>Server:</strong> ${data.name}</p>
           <p><strong>Online:</strong> ${data.onlineHumans}</p>
