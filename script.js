@@ -1,5 +1,5 @@
 const discordWidgetUrl = "https://discord.com/api/guilds/1316140799280545915/widget.json";
-const customApiUrl = "https://<DEINE-RAILWAY-URL>/api/announcements"; // 🔁 hier anpassen
+const customApiUrl = "ttps://ex0-bot-production.up.railway.app/api/announcements"; // 🔁 hier anpassen
 
 const discordStatsBox = document.getElementById("discord-stats");
 const channelList = document.getElementById("channel-list");
