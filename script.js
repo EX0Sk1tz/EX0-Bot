@@ -25,14 +25,12 @@ function getStatusDotClass(status) {
       const msg = data[0];
 
       announcementBox.innerHTML = `
-        <div class="widget-box">
           <p>
             <img src="${msg.avatar}" width="24" style="border-radius:50%;vertical-align:middle" />
             <strong>${msg.author}</strong> – 
             <em>${new Date(msg.timestamp).toLocaleString()}</em>
           </p>
           <p>${msg.content}</p>
-        </div>
       `;
     })
     .catch(err => {

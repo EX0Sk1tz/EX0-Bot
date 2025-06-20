@@ -103,6 +103,11 @@ footer {
   padding: 1rem;
   background: rgba(30, 30, 30, 0.9);
   border-radius: 10px;
+  transition: 0.2s ease;
+}
+
+.voice-channel:hover {
+  transform: translateY(-2px);
 }
 
 .vc-empty {
