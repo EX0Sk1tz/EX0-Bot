@@ -63,7 +63,10 @@ app.get('/api/stats', async (req, res) => {
     const onlineHumans = humans.filter(m => m.presence && m.presence.status !== 'offline');
 
     const voiceChannels = channels
-      .filter(c => c.isVoiceBased())
+      .filter(c =>
+        c.isVoiceBased() &&
+        c.parent && c.parent.name === "Gaming Hub"
+      )
       .map(vc => ({
         id: vc.id,
         name: vc.name,
