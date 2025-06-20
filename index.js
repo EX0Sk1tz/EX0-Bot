@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 import { Client, GatewayIntentBits } from 'discord.js';
 
 const client = new Client({
@@ -13,14 +14,15 @@ const client = new Client({
 
 const app = express();
 app.use(cors());
+app.use(morgan('combined')); // ⬅️ HTTP Logging
 
 client.once('ready', () => {
   console.log(`✅ Bot läuft als ${client.user.tag}`);
 });
 
-// REST-API Endpoint: Gibt die letzten 5 Nachrichten aus dem Announcement-Channel
 app.get('/api/announcements', async (req, res) => {
   try {
+    console.log(`[API] GET /api/announcements from ${req.ip}`);
     const channel = await client.channels.fetch(process.env.CHANNEL_ID);
     const messages = await channel.messages.fetch({ limit: 5 });
 
@@ -34,8 +36,8 @@ app.get('/api/announcements', async (req, res) => {
 
     res.json(result);
   } catch (err) {
-    console.error("Fehler beim Laden der Nachrichten:", err);
-    res.status(500).json({ error: "Fehler beim Abrufen der Nachrichten" });
+    console.error("❌ Fehler beim Abrufen der Nachrichten:", err);
+    res.status(500).json({ error: "Interner Fehler beim Lesen der Nachrichten" });
   }
 });
 
