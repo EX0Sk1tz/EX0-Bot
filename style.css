@@ -1,0 +1,95 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0e0e11;
+  color: #f2f2f2;
+  line-height: 1.6;
+}
+
+header {
+  text-align: center;
+}
+
+.banner {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  display: block;
+  margin: 0 ;
+  border-bottom: 3px solid #9c42b5;
+}
+
+
+.tagline {
+  font-size: 1.2rem;
+  color: #999;
+}
+
+section {
+  padding: 2rem 1rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+.intro, .widget, .channels, .members, .announcements {
+  background: #1a1a1f;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.widget-box {
+  background: #222;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.scroll-box {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+}
+
+.member img {
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.status-online { background-color: #43b581; }
+.status-idle { background-color: #faa61a; }
+.status-dnd { background-color: #f04747; }
+.status-offline { background-color: #747f8d; }
+
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #1a1a1f;
+  border-top: 2px solid #222;
+}
+
+.socials a {
+  margin: 0 1rem;
+  color: #00bcd4;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.socials a:hover {
+  text-decoration: underline;
+}
