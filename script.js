@@ -13,33 +13,34 @@ function getStatusDotClass(status) {
   }
 }
 
-// 📢 Ankündigung vom Bot (letzte Nachricht)
-fetch(announcementApiUrl)
-  .then(res => res.json())
-  .then(data => {
-    if (!data || data.length === 0) {
-      announcementBox.innerHTML = `<p>Keine Ankündigungen gefunden.</p>`;
-      return;
-    }
+  // 📢 Ankündigung vom Bot (letzte Nachricht)
+  fetch(announcementApiUrl)
+    .then(res => res.json())
+    .then(data => {
+      if (!data || data.length === 0) {
+        announcementBox.innerHTML = `<p>Keine Ankündigungen gefunden.</p>`;
+        return;
+      }
 
-    const msg = data[0];
+      const msg = data[0];
 
-    announcementBox.innerHTML = `
-      <div class="widget-box">
-        <p>
-          <img src="${msg.avatar}" width="24" style="border-radius:50%;vertical-align:middle" />
-          <strong>${msg.author}</strong> – 
-          <em>${new Date(msg.timestamp).toLocaleString()}</em>
-        </p>
-        <p>${msg.content}</p>
-      </div>
-    `;
-  })
-  .catch(err => {
-    console.error("❌ Fehler beim Laden der Ankündigungen:", err);
-    announcementBox.innerHTML = `<p>❌ Fehler beim Laden der Ankündigungen.</p>`;
-  });
+      announcementBox.innerHTML = `
+        <div class="widget-box">
+          <p>
+            <img src="${msg.avatar}" width="24" style="border-radius:50%;vertical-align:middle" />
+            <strong>${msg.author}</strong> – 
+            <em>${new Date(msg.timestamp).toLocaleString()}</em>
+          </p>
+          <p>${msg.content}</p>
+        </div>
+      `;
+    })
+    .catch(err => {
+      console.error("❌ Fehler beim Laden der Ankündigungen:", err);
+      announcementBox.innerHTML = `<p>❌ Fehler beim Laden der Ankündigungen.</p>`;
+    });
 
+  // 📊 Serverstatistik
   fetch(statsApiUrl)
     .then(res => res.json())
     .then(data => {
