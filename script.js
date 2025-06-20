@@ -1,5 +1,5 @@
-const discordWidgetUrl = "https://discord.com/api/guilds/1316140799280545915/widget.json";
-const customApiUrl = "https://ex0-bot-production.up.railway.app/api/announcements";
+const statsApiUrl = "https://ex0-bot-production.up.railway.app/api/stats";
+const announcementApiUrl = "https://ex0-bot-production.up.railway.app/api/announcements";
 
 const discordStatsBox = document.getElementById("discord-stats");
 const announcementBox = document.getElementById("announcement-box");
@@ -13,26 +13,8 @@ function getStatusDotClass(status) {
   }
 }
 
-// 📊 Widget.json: Server-Infos (Statistiken)
-fetch(discordWidgetUrl)
-  .then(res => res.json())
-  .then(data => {
-    const totalMembers = data.members.length;
-    const botCount = data.members.filter(m => m.username.toLowerCase().includes("bot")).length;
-    const humanCount = totalMembers - botCount;
-
-    discordStatsBox.innerHTML = `
-      <p><strong>Server:</strong> ${data.name}</p>
-      <p><strong>Online:</strong> ${humanCount}</p>
-    `;
-  })
-  .catch(err => {
-    console.error("Discord Widget API error:", err);
-    discordStatsBox.innerHTML = `<p>❌ Fehler beim Laden der Serverdaten.</p>`;
-  });
-
 // 📢 Ankündigung vom Bot (letzte Nachricht)
-fetch(customApiUrl)
+fetch(announcementApiUrl)
   .then(res => res.json())
   .then(data => {
     if (!data || data.length === 0) {
@@ -58,7 +40,7 @@ fetch(customApiUrl)
     announcementBox.innerHTML = `<p>❌ Fehler beim Laden der Ankündigungen.</p>`;
   });
 
-  fetch("https://ex0-bot-production.up.railway.app/api/stats")
+  fetch(statsApiUrl)
     .then(res => res.json())
     .then(data => {
       discordStatsBox.innerHTML = `
