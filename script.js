@@ -1,10 +1,10 @@
 const discordWidgetUrl = "https://discord.com/api/guilds/1316140799280545915/widget.json";
 const customApiUrl = "https://ex0-bot-production.up.railway.app/api/announcements";
+const humanApiUrl = "https://ex0-bot-production.up.railway.app/api/humans";
 
 const discordStatsBox = document.getElementById("discord-stats");
 const announcementBox = document.getElementById("announcement-box");
 const randomOnlineBox = document.getElementById("random-online");
-
 
 function getStatusDotClass(status) {
   switch (status) {
@@ -15,65 +15,73 @@ function getStatusDotClass(status) {
   }
 }
 
-function getAvatarURL(user) {
-  if (user.avatar) {
-    return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-  }
-  const fallbackIndex = parseInt(user.discriminator) % 5;
-  return `https://cdn.discordapp.com/embed/avatars/${fallbackIndex}.png`;
-}
-
-// 📊 Lade Daten aus Discord Widget API
+// 📊 Widget.json: Server-Infos (Statistiken)
 fetch(discordWidgetUrl)
   .then(res => res.json())
   .then(data => {
     const totalMembers = data.members.length;
     const botCount = data.members.filter(m => m.username.toLowerCase().includes("bot")).length;
     const humanCount = totalMembers - botCount;
-    // Stats
+
     discordStatsBox.innerHTML = `
       <p><strong>Server:</strong> ${data.name}</p>
-      <p><strong>Online:</strong> ${humanCount}</p>
+      <p><strong>Online (geschätzt):</strong> ${humanCount}</p>
     `;
+  })
+  .catch(err => {
+    console.error("Discord Widget API error:", err);
+    discordStatsBox.innerHTML = `<p>❌ Fehler beim Laden der Serverdaten.</p>`;
+  });
 
-    // 👥 Random Online Auswahl
-    const shuffled = [...data.members].sort(() => 0.5 - Math.random()).slice(0, 3);
+// 👥 Zeige echte Nutzer (via Bot API /api/humans)
+fetch(humanApiUrl)
+  .then(res => res.json())
+  .then(users => {
+    if (!users || users.length === 0) {
+      randomOnlineBox.innerHTML = `<p>Keine echten Nutzer online.</p>`;
+      return;
+    }
+
+    const shuffled = users.sort(() => 0.5 - Math.random()).slice(0, 3);
+
     randomOnlineBox.innerHTML = shuffled.map(m => `
       <div class="member">
-        <img src="${getAvatarURL(m)}" alt="Avatar" />
+        <img src="${m.avatar}" alt="Avatar" />
         <span>
           <span class="status-dot ${getStatusDotClass(m.status)}"></span>
           ${m.username}
         </span>
       </div>
     `).join("");
-
   })
   .catch(err => {
-    console.error("Discord Widget API error:", err);
-    discordStatsBox.innerHTML = `<p>❌ Fehler beim Laden der Serverdaten.</p>`;
-    memberList.innerHTML = `<p>Keine Daten verfügbar.</p>`;
+    console.error("❌ Fehler beim Laden der echten Nutzer:", err);
+    randomOnlineBox.innerHTML = `<p>❌ Fehler beim Laden der Online-Nutzer.</p>`;
   });
 
-  // 📢 Ankündigungen vom Bot
-  fetch(customApiUrl)
-    .then(res => res.json())
-    .then(data => {
+// 📢 Ankündigung vom Bot (letzte Nachricht)
+fetch(customApiUrl)
+  .then(res => res.json())
+  .then(data => {
+    if (!data || data.length === 0) {
+      announcementBox.innerHTML = `<p>Keine Ankündigungen gefunden.</p>`;
+      return;
+    }
 
-      if (!data || data.length === 0) {
-        announcementBox.innerHTML = `<p>Keine Ankündigungen gefunden.</p>`;
-        return;
-      }
+    const msg = data[0];
 
-      announcementBox.innerHTML = data.map(msg => `
-        <div class="widget-box">
-          <p><img src="${msg.avatar}" width="24" style="border-radius:50%;vertical-align:middle" />
-          <strong> ${msg.author}</strong> – <em>${new Date(msg.timestamp).toLocaleString()}</em></p>
-          <p>${msg.content}</p>
-        </div>
-      `).join("");
-    })
-    .catch(err => {
-      console.error("❌ Fehler beim Laden der Ankündigungen:", err);
-      announcementBox.innerHTML = `<p>❌ Fehler beim Laden der Ankündigungen.</p>`;
-    });
+    announcementBox.innerHTML = `
+      <div class="widget-box">
+        <p>
+          <img src="${msg.avatar}" width="24" style="border-radius:50%;vertical-align:middle" />
+          <strong>${msg.author}</strong> – 
+          <em>${new Date(msg.timestamp).toLocaleString()}</em>
+        </p>
+        <p>${msg.content}</p>
+      </div>
+    `;
+  })
+  .catch(err => {
+    console.error("❌ Fehler beim Laden der Ankündigungen:", err);
+    announcementBox.innerHTML = `<p>❌ Fehler beim Laden der Ankündigungen.</p>`;
+  });

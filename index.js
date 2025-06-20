@@ -47,3 +47,29 @@ client.login(process.env.DISCORD_TOKEN).then(() => {
     console.log(`🌐 API läuft auf Port ${PORT}`);
   });
 });
+
+app.get('/api/humans', async (req, res) => {
+  try {
+    const guild = await client.guilds.fetch(process.env.GUILD_ID);
+    const members = await guild.members.fetch();
+
+    const humansOnline = members.filter(m =>
+      !m.user.bot &&
+      m.presence &&
+      m.presence.status !== 'offline'
+    );
+
+    const result = humansOnline.map(m => ({
+      id: m.id,
+      username: m.user.username,
+      discriminator: m.user.discriminator,
+      avatar: m.user.displayAvatarURL({ size: 64 }),
+      status: m.presence.status
+    }));
+
+    res.json(result);
+  } catch (err) {
+    console.error("❌ Fehler bei /api/humans:", err);
+    res.status(500).json({ error: "Fehler beim Laden der echten Nutzer" });
+  }
+});
