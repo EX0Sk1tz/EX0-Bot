@@ -54,24 +54,41 @@ client.login(process.env.DISCORD_TOKEN).then(() => {
 app.get('/api/stats', async (req, res) => {
   try {
     const guild = await client.guilds.fetch(process.env.GUILD_ID);
-    await guild.members.fetch(); // Alle Member laden
+    await guild.members.fetch();
+    const channels = await guild.channels.fetch();
+    const owner = await guild.fetchOwner();
 
     const allMembers = guild.members.cache;
     const humans = allMembers.filter(m => !m.user.bot);
     const onlineHumans = humans.filter(m => m.presence && m.presence.status !== 'offline');
 
-    const owner = await guild.fetchOwner();
+    const voiceChannels = channels
+      .filter(c => c.isVoiceBased())
+      .map(vc => ({
+        id: vc.id,
+        name: vc.name,
+        userLimit: vc.userLimit,
+        connected: vc.members.map(m => ({
+          username: m.user.username,
+          discriminator: m.user.discriminator,
+          avatar: m.user.displayAvatarURL({ dynamic: true, size: 64 }),
+          status: m.presence?.status || "offline",
+          muted: m.voice?.mute || false,
+          deafened: m.voice?.deaf || false
+        }))
+      }));
 
     res.json({
       name: guild.name,
+      createdAt: guild.createdAt,
       owner: {
         username: owner.user.username,
         discriminator: owner.user.discriminator,
         avatar: owner.user.displayAvatarURL({ dynamic: true, size: 64 })
       },
-      createdAt: guild.createdAt,
       totalMembers: allMembers.size,
-      onlineHumans: onlineHumans.size
+      onlineHumans: onlineHumans.size,
+      voiceChannels
     });
 
   } catch (err) {
