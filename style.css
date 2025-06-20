@@ -1,4 +1,9 @@
-/* 🌌 Modernisierte style.css für EX0Sk1tz */
+/* 🎯 Primärfarbe: Lila Neon */
+:root {
+  --primary-color: #a259ff;
+  --secondary-color: #7f4de1;
+  --accent-color: #e14df0;
+}
 
 * {
   box-sizing: border-box;
@@ -125,4 +130,42 @@ footer {
     display: inline-block;
     margin: 0.5rem;
   }
+}
+
+/* 🎯 Primärfarbe: Lila Neon */
+:root {
+  --primary-color: #a259ff;
+  --secondary-color: #7f4de1;
+  --accent-color: #e14df0;
+}
+
+h1, h2, h3 {
+  color: var(--primary-color);
+}
+
+a {
+  color: var(--primary-color);
+}
+
+a:hover {
+  color: var(--accent-color);
+  text-shadow: 0 0 4px var(--accent-color);
+}
+
+.widget-box {
+  box-shadow: 0 0 12px rgba(162, 89, 255, 0.12);
+}
+
+.widget-box:hover {
+  box-shadow: 0 0 20px rgba(162, 89, 255, 0.3);
+  transform: scale(1.015);
+}
+
+/* 🖼 Banner ganz oben */
+#top-banner {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 3px solid var(--primary-color);
 }

@@ -14,7 +14,7 @@ const client = new Client({
 
 const app = express();
 app.use(cors());
-app.use(morgan('combined')); // ⬅️ HTTP Logging
+app.use(morgan('combined'));
 
 client.once('ready', () => {
   console.log(`✅ Bot läuft als ${client.user.tag}`);
