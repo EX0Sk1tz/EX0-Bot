@@ -6,6 +6,9 @@ const channelList = document.getElementById("channel-list");
 const memberList = document.getElementById("member-list");
 const announcementBox = document.getElementById("announcement-box");
 const randomOnlineBox = document.getElementById("random-online");
+const totalMembers = data.members.length;
+const botCount = data.members.filter(m => m.username.toLowerCase().includes("bot")).length;
+const humanCount = totalMembers - botCount;
 
 function getStatusDotClass(status) {
   switch (status) {
@@ -30,10 +33,12 @@ fetch(discordWidgetUrl)
   .then(data => {
     // Stats
     discordStatsBox.innerHTML = `
-      <p><strong>Servername:</strong> ${data.name}</p>
-      <p><strong>Textkanäle:</strong> ${data.channels.length}</p>
-      <p><strong>Online-Mitglieder:</strong> ${data.presence_count}</p>
-      <p><a href="${data.instant_invite}" target="_blank">Server beitreten →</a></p>
+      <p><strong>Server:</strong> ${data.name}</p>
+      <p><strong>Kanäle:</strong> ${data.channels.length}</p>
+      <p><strong>Online:</strong> ${data.presence_count}</p>
+      <p><strong>Menschen:</strong> ${humanCount}</p>
+      <p><strong>Bots:</strong> ${botCount}</p>
+      <p><a href="${data.instant_invite}" target="_blank">→ Jetzt beitreten</a></p>
     `;
 
     // Channel List
@@ -74,24 +79,26 @@ fetch(discordWidgetUrl)
     memberList.innerHTML = `<p>Keine Daten verfügbar.</p>`;
   });
 
-// 📢 Ankündigungen vom Bot
-fetch(customApiUrl)
-  .then(res => res.json())
-  .then(data => {
-    if (!data || data.length === 0) {
-      announcementBox.innerHTML = `<p>Keine Ankündigungen gefunden.</p>`;
-      return;
-    }
+  // 📢 Ankündigungen vom Bot
+  fetch(customApiUrl)
+    .then(res => res.json())
+    .then(data => {
+      console.log("Ankündigungen:", data); // 🪵 Debug-Ausgabe
 
-    announcementBox.innerHTML = data.map(msg => `
-      <div class="widget-box">
-        <p><img src="${msg.avatar}" width="24" style="border-radius:50%;vertical-align:middle" />
-        <strong> ${msg.author}</strong> – <em>${new Date(msg.timestamp).toLocaleString()}</em></p>
-        <p>${msg.content}</p>
-      </div>
-    `).join("");
-  })
-  .catch(err => {
-    console.error("Announcement API error:", err);
-    announcementBox.innerHTML = `<p>❌ Fehler beim Laden der Ankündigungen.</p>`;
-  });
+      if (!data || data.length === 0) {
+        announcementBox.innerHTML = `<p>Keine Ankündigungen gefunden.</p>`;
+        return;
+      }
+
+      announcementBox.innerHTML = data.map(msg => `
+        <div class="widget-box">
+          <p><img src="${msg.avatar}" width="24" style="border-radius:50%;vertical-align:middle" />
+          <strong> ${msg.author}</strong> – <em>${new Date(msg.timestamp).toLocaleString()}</em></p>
+          <p>${msg.content}</p>
+        </div>
+      `).join("");
+    })
+    .catch(err => {
+      console.error("❌ Fehler beim Laden der Ankündigungen:", err);
+      announcementBox.innerHTML = `<p>❌ Fehler beim Laden der Ankündigungen.</p>`;
+    });
