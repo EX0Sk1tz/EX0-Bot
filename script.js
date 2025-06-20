@@ -1,14 +1,10 @@
 const discordWidgetUrl = "https://discord.com/api/guilds/1316140799280545915/widget.json";
-const customApiUrl = "ttps://ex0-bot-production.up.railway.app/api/announcements";
+const customApiUrl = "https://ex0-bot-production.up.railway.app/api/announcements";
 
 const discordStatsBox = document.getElementById("discord-stats");
-const channelList = document.getElementById("channel-list");
-const memberList = document.getElementById("member-list");
 const announcementBox = document.getElementById("announcement-box");
 const randomOnlineBox = document.getElementById("random-online");
-const totalMembers = data.members.length;
-const botCount = data.members.filter(m => m.username.toLowerCase().includes("bot")).length;
-const humanCount = totalMembers - botCount;
+
 
 function getStatusDotClass(status) {
   switch (status) {
@@ -31,34 +27,14 @@ function getAvatarURL(user) {
 fetch(discordWidgetUrl)
   .then(res => res.json())
   .then(data => {
+    const totalMembers = data.members.length;
+    const botCount = data.members.filter(m => m.username.toLowerCase().includes("bot")).length;
+    const humanCount = totalMembers - botCount;
     // Stats
     discordStatsBox.innerHTML = `
       <p><strong>Server:</strong> ${data.name}</p>
-      <p><strong>Kanäle:</strong> ${data.channels.length}</p>
-      <p><strong>Online:</strong> ${data.presence_count}</p>
-      <p><strong>Menschen:</strong> ${humanCount}</p>
-      <p><strong>Bots:</strong> ${botCount}</p>
-      <p><a href="${data.instant_invite}" target="_blank">→ Jetzt beitreten</a></p>
+      <p><strong>Online:</strong> ${humanCount}</p>
     `;
-
-    // Channel List
-    channelList.innerHTML = data.channels
-      .sort((a, b) => a.position - b.position)
-      .map(channel => `<li># ${channel.name}</li>`)
-      .join("");
-
-    // Member List
-    memberList.innerHTML = data.members
-      .sort((a, b) => a.username.localeCompare(b.username))
-      .map(member => `
-        <div class="member">
-          <img src="${getAvatarURL(member)}" alt="Avatar" />
-          <span>
-            <span class="status-dot ${getStatusDotClass(member.status)}"></span>
-            ${member.username}#${member.discriminator}
-          </span>
-        </div>
-      `).join("");
 
     // 👥 Random Online Auswahl
     const shuffled = [...data.members].sort(() => 0.5 - Math.random()).slice(0, 3);
@@ -83,7 +59,6 @@ fetch(discordWidgetUrl)
   fetch(customApiUrl)
     .then(res => res.json())
     .then(data => {
-      console.log("Ankündigungen:", data); // 🪵 Debug-Ausgabe
 
       if (!data || data.length === 0) {
         announcementBox.innerHTML = `<p>Keine Ankündigungen gefunden.</p>`;
